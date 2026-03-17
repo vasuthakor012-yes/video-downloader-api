@@ -10,15 +10,15 @@ def home():
     return "✅ Video Downloader API is Running!"
 
 def normalize_url(url):
-    # m.youtube.com → www.youtube.com
     url = re.sub(r'https?://m\.youtube\.com', 'https://www.youtube.com', url)
-    # youtu.be short links ठीक करो
     url = re.sub(r'https?://youtu\.be/([a-zA-Z0-9_-]+)', r'https://www.youtube.com/watch?v=\1', url)
     return url
 
 @app.route('/get-video', methods=['GET'])
 def get_video():
     url = request.args.get('url')
+    cookies = request.args.get('cookies', '')
+
     if not url:
         return jsonify({'success': False, 'error': 'URL missing'}), 400
 
@@ -32,12 +32,12 @@ def get_video():
             'format': 'best[ext=mp4]/best',
             'extractor_args': {
                 'youtube': {
-                    'player_client': ['ios'],
-                    'player_skip': ['webpage', 'configs'],
+                    'player_client': ['ios', 'web'],
                 }
             },
             'http_headers': {
-                'User-Agent': 'com.google.ios.youtube/19.09.3 (iPhone14,3; U; CPU iOS 16_1 like Mac OS X)',
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
+                'Cookie': cookies,
             },
         }
 
