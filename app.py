@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import yt_dlp
 import os
+import re
 
 app = Flask(__name__)
 
@@ -8,12 +9,20 @@ app = Flask(__name__)
 def home():
     return "✅ Video Downloader API is Running!"
 
+def normalize_url(url):
+    # m.youtube.com → www.youtube.com
+    url = re.sub(r'https?://m\.youtube\.com', 'https://www.youtube.com', url)
+    # youtu.be short links ठीक करो
+    url = re.sub(r'https?://youtu\.be/([a-zA-Z0-9_-]+)', r'https://www.youtube.com/watch?v=\1', url)
+    return url
+
 @app.route('/get-video', methods=['GET'])
 def get_video():
     url = request.args.get('url')
-
     if not url:
         return jsonify({'success': False, 'error': 'URL missing'}), 400
+
+    url = normalize_url(url)
 
     try:
         ydl_opts = {
@@ -21,7 +30,6 @@ def get_video():
             'no_warnings': True,
             'skip_download': True,
             'format': 'best[ext=mp4]/best',
-            # ✅ iOS client use करो — YouTube इसे block नहीं करता
             'extractor_args': {
                 'youtube': {
                     'player_client': ['ios'],
