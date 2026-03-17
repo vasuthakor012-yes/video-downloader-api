@@ -21,20 +21,20 @@ def get_video():
             'no_warnings': True,
             'skip_download': True,
             'format': 'best[ext=mp4]/best',
-            # ✅ YouTube Bot Detection Fix
+            # ✅ iOS client use करो — YouTube इसे block नहीं करता
             'extractor_args': {
                 'youtube': {
-                    'player_client': ['android'],
+                    'player_client': ['ios'],
+                    'player_skip': ['webpage', 'configs'],
                 }
             },
             'http_headers': {
-                'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
+                'User-Agent': 'com.google.ios.youtube/19.09.3 (iPhone14,3; U; CPU iOS 16_1 like Mac OS X)',
             },
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download=False)
-
             video_url = info.get('url')
             title = info.get('title', 'video')
             thumbnail = info.get('thumbnail', '')
