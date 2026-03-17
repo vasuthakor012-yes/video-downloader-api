@@ -20,8 +20,16 @@ def get_video():
             'quiet': True,
             'no_warnings': True,
             'skip_download': True,
-            'cookiefile': None,
             'format': 'best[ext=mp4]/best',
+            # ✅ YouTube Bot Detection Fix
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['android'],
+                }
+            },
+            'http_headers': {
+                'User-Agent': 'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
+            },
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
